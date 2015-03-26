@@ -33,6 +33,8 @@ public:
 	T remove(Posi(T) p);
 	bool disordered();
 	void sort();
+	Posi(T) find(T e);
+	Posi(T) search(T e);
 };
 
 int main()
@@ -53,6 +55,7 @@ int main()
 
 	//cout << l.disordered();
 	l.sort();
+	l.insertAfter(l.search(7), 7);
 	l.print();
 	return 0;
 }
@@ -171,4 +174,30 @@ void List<T>::sort()
 		remove(i);
 		i = newi;
 	}
+}
+
+template <typename T>
+Posi(T) List<T>::find(T e)
+{
+	Posi(T) x = head.next;
+	while (x != &tail)
+	{
+		if (x->data == e)
+			return x;
+		x = x->next;
+	}
+	return nullptr;
+}
+
+//return the largest x which is not bigger than e
+//so we can use List.insertAfter(List.search(e), e) to insert e in a sorted list
+template <typename T>
+Posi(T) List<T>::search(T e)
+{
+	Posi(T) x = head.next;
+	while (x != &tail && x->data <= e)
+	{
+		x = x->next;
+	}
+	return x->pred;
 }
