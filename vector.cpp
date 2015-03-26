@@ -5,15 +5,22 @@ using namespace std;
 
 int main()
 {
-	Vector<int> a(10);
+	Vector<int> a(5);
 	a.insert(0, 2);
 	a.insert(0, 3);
 	a.insert(0, 7);
+	cout << a.capacity() << endl;
 	a.insert(0, 4);
 	a.insert(0, 4);
 	a.insert(0, 5);
 	a.insert(0, 9);
 	a.insert(0, 9);
+	a.insert(0, 5);
+	a.insert(0, 5);
+	a.insert(0, 9);
+	a.insert(0, 9);
+	a.insert(0, 5);
+	cout << a.capacity() << endl;
 	a.print();
 	a.sort();
 	a.print();

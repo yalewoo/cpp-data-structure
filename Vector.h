@@ -10,13 +10,19 @@ protected:
 	int _size;	//当前元素个数
 	int _capacity;	//最大容量
 	T* _elem;	//存放向量元素
+
+	void expand();	//扩容为原来的2倍
+	void decrease();	//收缩容量为二分之一
 	void copyFrom(T a[], int lo, int hi);	//把a数组[lo,hi)部分复制到_elem
+
 	void bubbleSort();	//冒泡排序
 	int partition(int lo, int hi);	//快速排序的划分
 	void quicksort(int lo, int hi);	//快速排序
 	void merge(int lo, int mid, int hi);
 	void mergesort(int lo, int hi);
+
 	void swap(T &a, T &b){T tmp = a; a = b; b = tmp;}
+	
 public:
 	Vector(int c = DEFAULT_CAPACITY)
 	{
@@ -29,12 +35,15 @@ public:
 		copyFrom(s._elem, 0, s._size);
 	}
 	void print(void);	//打印
-	int size(void);	//返回当前元素总数
+	int size(void) {return _size;}	//返回当前元素总数
+	int capacity() {return _capacity;}
 	T get(int r);	//返回秩为r的元素
+
 	bool put(int r, T e);	//将位置r处元素替换为e
 	bool insert(int r, T e);	//在位置r处插入e 后面的后移
 	T remove(int r);	//删除秩为r的元素，并返回
 	bool disordered();	//是否非降序排列（true乱序 false有序）
+
 	void sort();	//按照非降排序
 	int find(T e, int lo, int hi);	//查找e 返回下标
 	int search(T e, int lo, int hi);	//有序查找 返回不大于e的最大元素的位置
@@ -71,6 +80,8 @@ bool Vector<T>::insert(int r, T e)
 {
 	if (r > _size)
 		return false;
+	if (_size == _capacity)
+		expand();
 
 	int i = _size++;
 	while (i > r)
@@ -80,12 +91,6 @@ bool Vector<T>::insert(int r, T e)
 	}
 	_elem[i] = e;
 	return true;
-}
-
-template <typename T>
-int Vector<T>::size(void)
-{
-	return _size;
 }
 
 //返回秩为r的元素
@@ -299,4 +304,29 @@ void Vector<T>::mergesort(int lo, int hi)
 	mergesort(lo, mid);
 	mergesort(mid, hi);
 	merge(lo, mid, hi);
+}
+
+template <typename T>
+void Vector<T>::expand()
+{
+	_capacity *= 2;
+	T *old = _elem;
+	_elem = new T[_capacity];
+	for (int i = 0; i < _size; ++i)
+	{
+		_elem[i] = old[i];
+	}
+	delete[] old;
+}
+template <typename T>
+void Vector<T>::decrease()
+{
+	_capacity /= 2;
+	T *old = _elem;
+	_elem = new T[_capacity];
+	for (int i = 0; i < _size; ++i)
+	{
+		_elem[i] = old[i];
+	}
+	delete[] old;
 }
