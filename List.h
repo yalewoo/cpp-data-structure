@@ -1,6 +1,6 @@
+#include <iostream>
 #define Posi(T) ListNode<T>*
 
-#define NULL 0
 
 template <typename T> struct ListNode
 {
@@ -20,6 +20,7 @@ protected:
 	ListNode<T> tail;
 public:
 	List();
+	~List();
 	int size() {return _size; }
 	bool empty() {return !_size; }
 	Posi(T) first() {return head.next;}
@@ -36,7 +37,18 @@ public:
 	Posi(T) search(T e);
 };
 
-
+template <typename T>
+List<T>::~List()
+{
+	Posi(T) x = head.next;
+	Posi(T) x1 = x;
+	while (x != &tail)
+	{
+		x1 = x;
+		x = x->next;
+		delete x1;
+	}
+}
 template <typename T>
 Posi(T) ListNode<T>::insertPred(T e)
 {
@@ -73,6 +85,7 @@ Posi(T) List<T>::insertAsFirst(T e)
 	Posi(T) x = new ListNode<T> (e, &head, head.next);
 	head.next->pred = x;
 	head.next = x;
+	++_size;
 	return x;
 }
 template <typename T>
@@ -81,6 +94,7 @@ Posi(T) List<T>::insertAsLast(T e)
 	Posi(T) x = new ListNode<T> (e, tail.pred, &tail);
 	tail.pred->next = x;
 	tail.pred = x;
+	++_size;
 	return x;
 }
 
@@ -102,6 +116,7 @@ Posi(T) List<T>::insertAfter(Posi(T) p, T e)
 	Posi(T) x = new ListNode<T> (e, p, p->next);
 	p->next = x;
 	x->next->pred = x;
+	++_size;
 	return x;
 }
 template <typename T>
@@ -110,6 +125,7 @@ Posi(T) List<T>::insertBefore(Posi(T) p, T e)
 	Posi(T) x = new ListNode<T> (e, p->pred, p);
 	p->pred = x;
 	x->pred->next = x;
+	++_size;
 	return x;
 }
 
@@ -120,6 +136,7 @@ T List<T>::remove(Posi(T) p)
 	p->pred->next = p->next;
 	p->next->pred = p->pred;
 	delete p;
+	--_size;
 	return tmp;
 }
 

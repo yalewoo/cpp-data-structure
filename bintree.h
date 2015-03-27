@@ -1,4 +1,8 @@
-using namespace std;
+#include "Stack.h"
+#include "Queue.h"
+
+#include <algorithm>
+using std::max;
 
 #define BinNodePosi(T) BinNode<T>*
 
@@ -20,11 +24,15 @@ public:
 	BinNodePosi(T) insertAsRC(T const &);
 	BinNodePosi(T) succ();
 
-	template <typename VST> void travLevel(VST &);
+	
 	template <typename VST> void travPre_R(VST &);
+	template <typename VST> void travPre_I(VST &);
+	template <typename VST> void travPre_II(VST &);
 	template <typename VST> void travIn_R(VST &);
+	template <typename VST> void travIn_I(VST &);
 	template <typename VST> void travPost_R(VST &);
-
+	template <typename VST> void travPost_I(VST &);
+	template <typename VST> void travLevel(VST &);
 	BinNode(T e, BinNodePosi(T) p);
 };
 template <typename T>
@@ -203,6 +211,42 @@ void BinNode<T>::travPre_R(VST & visit)
 }
 template <typename T>
 template <typename VST>
+void BinNode<T>::travPre_I(VST & visit)
+{
+	Stack<BinNodePosi(T)> stk;
+	BinNodePosi(T) x;
+
+	stk.push(this);
+	while (!stk.empty())
+	{
+		x = stk.pop();
+		while (x != NULL)
+		{
+			visit(x->data);
+			stk.push(x->rchild);
+			x = x->lchild;
+		}
+	}
+}
+template <typename T>
+template <typename VST>
+void BinNode<T>::travPre_II(VST & visit)
+{
+	Stack<BinNodePosi(T)> stk;
+	BinNodePosi(T) x;
+
+	stk.push(this);
+	while (!stk.empty())
+	{
+		x = stk.pop();
+		if (x != NULL) visit(x->data);
+		if (x->rchild) stk.push(x->rchild);
+		if (x->lchild) stk.push(x->lchild);
+	}
+}
+
+template <typename T>
+template <typename VST>
 void BinNode<T>::travIn_R(VST & visit)
 {
 	if (this == NULL) return;
@@ -213,6 +257,32 @@ void BinNode<T>::travIn_R(VST & visit)
 }
 template <typename T>
 template <typename VST>
+void BinNode<T>::travIn_I(VST & visit)
+{
+	Stack<BinNodePosi(T)> stk;
+	BinNodePosi(T) x = this;
+
+	stk.push(x);
+	x = x->lchild;
+
+	while (true)
+	{
+		while (x != NULL)
+		{
+			stk.push(x);
+			x = x->lchild;
+		}
+
+		if (stk.empty()) break;
+
+		x = stk.pop();
+		visit(x->data);
+		x = x->rchild;
+	}
+}
+
+template <typename T>
+template <typename VST>
 void BinNode<T>::travPost_R(VST & visit)
 {
 	if (this == NULL) return;
@@ -221,11 +291,54 @@ void BinNode<T>::travPost_R(VST & visit)
 	this->rchild->travPost_R(visit);
 	visit(this->data);
 }
+
+template <typename T>
+template <typename VST>
+void BinNode<T>::travPost_I(VST & visit)
+{
+	Stack<BinNodePosi(T)> stk;
+	
+	BinNodePosi(T) x = this;
+	if (x) stk.push(this);
+
+	while (!stk.empty())
+	{
+		if (x->parent != stk.top())
+		{
+			while ((x = stk.top()) != NULL)
+			{
+				if (x->lchild)
+				{
+					if (x->rchild)
+						stk.push(x->rchild);
+					stk.push(x->lchild);
+				}
+				else
+				{
+					stk.push(x->rchild);
+				}
+			}
+			stk.pop();
+		}
+		x = stk.pop();
+		visit(x->data);
+	}
+}
 template <typename T>
 template <typename VST>
 void BinNode<T>::travLevel(VST & visit)
 {
+	Queue<BinNodePosi(T)> q;
+	BinNodePosi(T) x = this;
 	
+	q.enqueue(x);
+	while (!q.empty())
+	{
+		x = q.dequeue();
+		if (x) visit(x->data);
+		if (x->lchild) q.enqueue(x->lchild);
+		if (x->rchild) q.enqueue(x->rchild);
+	}
 }
 
 template <typename T>

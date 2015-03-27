@@ -28,14 +28,17 @@ int main()
 	bt->attachAsLC(bt->root()->lchild, bt1);
 
 	Printint<int> visit;
-
-	(bt->root())->travPre_R(visit);
+	(bt->root())->travPre_I(visit);
 	cout << endl;
+	(bt->root())->travPre_II(visit);
+	cout << endl;
+	(bt->root())->travPre_R(visit);
+	cout << endl << endl;
 	(bt->root())->travIn_R(visit);
 	cout << endl;
-	(bt->root())->travPost_R(visit);
+	(bt->root())->travIn_I(visit);
 	cout << endl;
-
+	
 	auto x = bt->root();
 	while (x->lchild != NULL)
 		x = x->lchild;
@@ -45,6 +48,14 @@ int main()
 		cout << x->data << " ";
 		x = x->succ();
 	}
+	cout << endl << endl;
+	(bt->root())->travPost_R(visit);
+	cout << endl;
+	(bt->root())->travPost_I(visit);
+	cout << endl << endl;
+
+	(bt->root())->travLevel(visit);
+	cout << endl;
 
 	return 0;
 }

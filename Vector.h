@@ -34,6 +34,7 @@ public:
 	{
 		copyFrom(s._elem, 0, s._size);
 	}
+	~Vector() { if (_elem) delete[] _elem; }
 	template <typename VST> void travser(VST &visit);	//遍历
 	int size() {return _size;}	//返回当前元素总数
 	int capacity() {return _capacity;}
