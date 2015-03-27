@@ -1,6 +1,6 @@
 
-using std::cout;
-using std::endl;
+#include <cstdlib>
+using std::rand;
 
 #define DEFAULT_CAPACITY 5
 
@@ -34,9 +34,10 @@ public:
 	{
 		copyFrom(s._elem, 0, s._size);
 	}
-	void print(void);	//打印
-	int size(void) {return _size;}	//返回当前元素总数
+	template <typename VST> void travser(VST &visit);	//遍历
+	int size() {return _size;}	//返回当前元素总数
 	int capacity() {return _capacity;}
+	bool empty() {return !_size;}
 	T get(int r);	//返回秩为r的元素
 
 	bool put(int r, T e);	//将位置r处元素替换为e
@@ -66,13 +67,11 @@ void Vector<T>::copyFrom(T a[], int lo, int hi)
 }
 
 template <typename T>
-void Vector<T>::print(void)
+template <typename VST>
+void Vector<T>::travser(VST &visit)
 {
 	for (int i = 0; i < _size; ++i)
-	{
-		cout << _elem[i] << " ";
-	}
-	cout << endl;
+		visit(_elem[i]);
 }
 
 template <typename T>

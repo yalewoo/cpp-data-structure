@@ -3,6 +3,16 @@
 
 using namespace std;
 
+template <typename T>
+class MyPrint
+{
+public:
+	void operator()(T e)
+	{
+		cout << e << " ";
+	}
+};
+
 int main()
 {
 	Vector<int> a(5);
@@ -21,9 +31,12 @@ int main()
 	a.insert(0, 9);
 	a.insert(0, 5);
 	cout << a.capacity() << endl;
-	a.print();
+
+	MyPrint<int> visit;
+
+	a.travser(visit);
 	a.sort();
-	a.print();
+	a.travser(visit);
 
 	//cout << a.find(2, 0, 1);
 	//cout << "uniquify " << a.uniquify() << endl;
