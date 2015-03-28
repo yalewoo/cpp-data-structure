@@ -2,38 +2,34 @@
 
 using namespace std;
 
-template <typename T>
-class A
+template <typename T> 
+void func(T * & x)
 {
-public:
-	T a;
-
-	template <typename VST> void func(VST &visit);
-};
-
-template <typename T, typename VST> 
-void func(A<T>* x, VST &visit)
-{
-	visit(x->a);
+	x += 1;
 }
 
 template <typename T>
-class B
-{
+class A
+{	
+protected:
+	T *a;
 public:
-	 void operator()(T e)
-	{
-		cout << e;
-	}
+
+	void func1();
 };
+template <typename T>
+void A<T>::func1()
+{
+	func(a);
+}
+
+
 
 int main()
 {
-	B<int> visit;
-	A<int> a;
-	a.a = 6;
-	cout << a.a;
-	a.func(visit);
+	A<int> aa;
+
+	aa.func1();
 
 	return 0;
 }
