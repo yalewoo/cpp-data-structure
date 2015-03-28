@@ -39,5 +39,9 @@ int main()
 	b.remove(51);
 	b.travIn(visit);
 	cout << endl << b.height() << endl;
+	cout << endl;
+
+	b.display();
+	cout << endl << endl;
 	return 0;
 }

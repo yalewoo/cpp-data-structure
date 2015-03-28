@@ -57,5 +57,7 @@ int main()
 	(bt->root())->travLevel(visit);
 	cout << endl;
 
+	bt->display();
+
 	return 0;
 }
