@@ -2,11 +2,19 @@
 #include "Queue.h"
 
 #include <algorithm>
+#include <iostream>
+#include <cstdio>
 using std::max;
+using std::cout;
+using std::endl;
 
 #define BinNodePosi(T) BinNode<T>*
 
 #define stature(p) ((p) ? (p)->height : -1)	//height, empty tree has height -1
+#define posilchild(p) ((p)->lchild ? (p)->lchild->horizontal_position : (p)->horizontal_position)
+#define posirchild(p) ((p)->rchild ? (p)->rchild->horizontal_position : (p)->horizontal_position)
+
+
 
 template <typename T>
 class BinNode
@@ -17,7 +25,11 @@ public:
 	int height;
 	BinNodePosi(T) lchild;
 	BinNodePosi(T) rchild;
+
+	int horizontal_position;	//Inorder travser index used to display the tree. 
+	int distance_to_root;
 	
+
 	int size();	//how many sub tree node(include this)
 
 	BinNodePosi(T) insertAsLC(T const &);
@@ -33,8 +45,32 @@ public:
 	template <typename VST> void travPost_R(VST &);
 	template <typename VST> void travPost_I(VST &);
 	template <typename VST> void travLevel(VST &);
+
+	
 	BinNode(T e, BinNodePosi(T) p);
+	BinNode();
 };
+
+template <typename T>
+BinNode<T>::BinNode(T e, BinNodePosi(T) p) : data(e), parent(p)
+{
+	height = 0;
+	lchild = 0;
+	rchild = 0;
+	horizontal_position = 0;
+	distance_to_root = 0;
+}
+template <typename T>
+BinNode<T>::BinNode() : data(0), parent(0)
+{
+	height = 0;
+	lchild = 0;
+	rchild = 0;
+	horizontal_position = 0;
+	distance_to_root = 0;
+
+}
+
 template <typename T>
 int BinNode<T>::size()
 {
@@ -44,14 +80,9 @@ int BinNode<T>::size()
 	return s;
 }
 
-template <typename T>
-BinNode<T>::BinNode(T e, BinNodePosi(T) p) : data(e), parent(p)
-{
-	height = 0;
-	lchild = 0;
-	rchild = 0;
-	
-}
+
+
+
 template <typename T>
 BinNodePosi(T) BinNode<T>::insertAsLC(T const & e)
 {
@@ -74,9 +105,13 @@ protected:
 
 	int updateHeight(BinNodePosi(T) x); //update height of x
 	void updateHeightAbove(BinNodePosi(T) x); //update height of x and x's parents
+	void updateDistanceToRoot(BinNodePosi(T) x);
 public:
 	BinTree(BinNodePosi(T) root);
+	BinTree();
+	~BinTree();
 	int size() const { return _size; }	//how many binnodes
+	int height() const { return _root ? _root->height : 0; }
 	bool empty() const { return !_root; }
 	BinNodePosi(T) root() const { return _root; }
 	BinNodePosi(T) insertAsLC(BinNodePosi(T) x, T const & e);
@@ -86,13 +121,33 @@ public:
 	int remove(BinNodePosi(T) x);
 	BinNodePosi(T) secede(BinNodePosi(T) x);
 
+	template <typename VST> void travPre(VST &v) { _root->travPre_I(v); }
+	template <typename VST> void travIn(VST &v) { _root->travIn_I(v); }
+	template <typename VST> void travPost(VST &v) { _root->travPost_I(v); }
+	template <typename VST> void travLevel(VST &v) { _root->travLevel_I(v); }
+
+	void display();
+
 };
+template <typename T>
+BinTree<T>::BinTree()
+{
+	_size = 0;
+	_root = NULL;
+}
+
 template <typename T>
 BinTree<T>::BinTree(BinNodePosi(T) root) : _root(root)
 {
 	_size = root->size();
 	root->parent = NULL;
 }
+template <typename T>
+BinTree<T>::~BinTree()
+{
+	removeAt(_root);
+}
+
 template <typename T>
 int BinTree<T>::updateHeight(BinNodePosi(T) x)
 {
@@ -359,4 +414,182 @@ BinNodePosi(T) BinNode<T>::succ()
 		x = x->parent;
 	}
 	return x;
+}
+
+
+
+template <typename T>
+void BinTree<T>::updateDistanceToRoot(BinNodePosi(T) x)
+{
+	if (!x) return;
+	int i = 0;
+	BinNodePosi(T) p = x;
+	while (p != NULL)
+	{
+		p = p->parent;
+		++i;
+	}
+
+	x->distance_to_root = i-1;
+
+	Queue<BinNodePosi(T)> q;
+	
+	q.enqueue(x);
+	while (!q.empty())
+	{
+		x = q.dequeue();
+		if (x && x->parent) 
+			x->distance_to_root = x->parent->distance_to_root + 1;
+		if (x->lchild) q.enqueue(x->lchild);
+		if (x->rchild) q.enqueue(x->rchild);
+	}
+
+
+
+}
+
+// template <typename T>
+// void BinTree<T>::display()
+// {
+// 	int count = 0;
+// 	BinNodePosi(T) x = _root;
+// 	while (x->lchild != NULL)
+// 		x = x->lchild;
+
+// 	while (x != NULL)
+// 	{
+// 		x->horizontal_position = ++count;
+// 		x = x->succ();
+// 	}
+
+// 	updateDistanceToRoot(_root);
+
+
+// 	Queue<BinNodePosi(T)> q;
+// 	x = _root;
+	
+// 	q.enqueue(x);
+
+// 	int nowheight = 0;
+// 	int lastheight = 0;
+// 	int levelcount = 0;
+// 	int i = 0;
+// 	while (!q.empty())
+// 	{
+// 		x = q.dequeue();
+
+// 		if (x) 
+// 		{
+// 			nowheight = x->distance_to_root;
+
+// 			if (nowheight != lastheight)
+// 			{
+// 				lastheight = nowheight;
+// 				cout << endl;
+// 				levelcount = 0;
+// 			}
+
+// 			for(i = levelcount; i < x->horizontal_position; ++i)
+// 			{
+// 				printf("\t");
+// 			}
+// 			cout << x->data;
+// 			levelcount += x->horizontal_position - levelcount;
+
+// 		}
+
+// 		if (x->lchild) q.enqueue(x->lchild);
+// 		if (x->rchild) q.enqueue(x->rchild);
+// 	}
+// 	cout << endl << endl;
+// }
+
+
+template <typename T>
+void BinTree<T>::display()
+{
+	int count = 0;
+	BinNodePosi(T) x = _root;
+	while (x->lchild != NULL)
+		x = x->lchild;
+
+	while (x != NULL)
+	{
+		x->horizontal_position = ++count;
+		x->horizontal_position *= 4;
+		x = x->succ();
+	}
+
+	updateDistanceToRoot(_root);
+
+
+	Queue<BinNodePosi(T)> q;
+	x = _root;
+	
+	q.enqueue(x);
+
+	int nowheight = 0;
+	int lastheight = 0;
+	int levelcount = 0;
+	int i = 0;
+	while (!q.empty())
+	{
+		x = q.dequeue();
+
+		long long int tmpposi;
+		if (x) 
+		{
+			nowheight = x->distance_to_root;
+
+			if (nowheight != lastheight)
+			{
+				lastheight = nowheight;
+				cout << endl;
+				levelcount = 0;
+			}
+
+
+
+			for(i = levelcount; i < posilchild(x); ++i)
+			{
+				printf(" ");
+			}
+			
+			int firstprint = 1;
+			for (; i < x->horizontal_position; ++i)
+			{
+				if (firstprint)
+				{
+					printf("_");
+					firstprint = 0;
+				}
+				else
+					printf("_");
+			}
+
+			tmpposi = cout.tellp();
+			cout << x->data;
+			long long int tellpppp = cout.tellp() - tmpposi;
+			levelcount += (int) (tellpppp);
+
+			levelcount += x->horizontal_position - levelcount;
+
+			for (i = levelcount; i < posirchild(x); ++i)
+			{
+				if (i == posirchild(x) - 1)
+					printf("_");
+				else
+					printf("_");
+			}
+			levelcount = i;
+
+
+		}
+
+		if (x->lchild) q.enqueue(x->lchild);
+		if (x->rchild) q.enqueue(x->rchild);
+	}
+
+
+	cout << endl << endl;
 }
