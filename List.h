@@ -181,7 +181,7 @@ Posi(T) List<T>::find(T e)
 			return x;
 		x = x->next;
 	}
-	return nullptr;
+	return 0;
 }
 
 //return the largest x which is not bigger than e
