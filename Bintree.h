@@ -52,6 +52,7 @@ public:
 	
 	BinNode(T e, BinNodePosi(T) p);
 	BinNode();
+	virtual ~BinNode(){}
 };
 
 template <typename T>
@@ -112,7 +113,7 @@ protected:
 public:
 	BinTree(BinNodePosi(T) root);
 	BinTree();
-	~BinTree();
+	virtual ~BinTree();
 	int size() const { return _size; }	//how many binnodes
 	int height() const { return _root ? _root->height : 0; }
 	bool empty() const { return !_root; }
@@ -121,7 +122,7 @@ public:
 	BinNodePosi(T) insertAsRC(BinNodePosi(T) x, T const & e);
 	BinNodePosi(T) attachAsLC(BinNodePosi(T) x, BinTree<T>* & S);
 	BinNodePosi(T) attachAsRC(BinNodePosi(T) x, BinTree<T>* & S);
-	int remove(BinNodePosi(T) x);
+	virtual int remove(BinNodePosi(T) x);
 	BinNodePosi(T) secede(BinNodePosi(T) x);
 
 	template <typename VST> void travPre(VST &v) { _root->travPre_I(v); }
