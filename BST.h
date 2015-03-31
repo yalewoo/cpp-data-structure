@@ -30,16 +30,17 @@ template <typename T>
 BinNodePosi(T) searchIn(BinNodePosi(T) root, const T & e, BinNodePosi(T) & hot)
 {
 	BinNodePosi(T) x = root;
-	hot = root;
+	hot = 0;
 	while (x != NULL)
 	{
+		if (e == x->data)
+			return x;
+
 		hot = x;
 		if (e < x->data)
 			x = x->lchild;
-		else if (x->data < e)
-			x = x->rchild;
 		else
-			return x;
+			x = x->rchild;
 	}
 	return x;
 }
