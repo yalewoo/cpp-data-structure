@@ -145,7 +145,7 @@ BinTree<T>::BinTree(BinNodePosi(T) root) : _root(root)
 template <typename T>
 BinTree<T>::~BinTree()
 {
-	removeAt(_root);
+	removeTreeByRootNode(_root);
 }
 
 template <typename T>
@@ -222,7 +222,7 @@ int BinTree<T>::remove(BinNodePosi(T) x)
 
 	updateHeightAbove(x->parent);
 
-	int n = removeAt(x);
+	int n = removeTreeByRootNode(x);
 	_size -= n;
 	return n;
 }
@@ -245,10 +245,10 @@ BinNodePosi(T) BinTree<T>::secede(BinNodePosi(T) x)
 }
 
 template <typename T>
-static int removeAt(BinNodePosi(T) x)
+int removeTreeByRootNode(BinNodePosi(T) x)
 {
 	if (x == NULL) return 0;
-	int n = 1 + removeAt(x->lchild) + removeAt(x->rchild);
+	int n = 1 + removeTreeByRootNode(x->lchild) + removeTreeByRootNode(x->rchild);
 
 	delete x;
 	return n;
