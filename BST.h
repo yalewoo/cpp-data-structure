@@ -8,6 +8,7 @@ public:
 	virtual BinNodePosi(T) search(const T &);
 	virtual BinNodePosi(T) insert(const T &);
 	virtual bool remove(const T &);
+	void removeAt(BinNodePosi(T) x);
 protected:
 	using BinTree<T>::_root;
 	using BinTree<T>::_size;
@@ -87,12 +88,10 @@ void BST<T>::transplant(BinNodePosi(T) p, BinNodePosi(T) c)
 
 	if (c) c->parent = p->parent;
 }
-template <typename T>
-bool BST<T>::remove(const T & e)
-{
-	BinNodePosi(T) x = search(e);
-	if (!x) return false;
 
+template <typename T>
+void BST<T>::removeAt(BinNodePosi(T) x)
+{
 	if (!x->lchild)	//x has no lchild, just use rchild to replace x,including rchild==NULL
 	{
 		_hot = x->parent;
@@ -133,6 +132,14 @@ bool BST<T>::remove(const T & e)
 	}
 	--_size;
 	this->updateHeightAbove(_hot);
+}
+template <typename T>
+bool BST<T>::remove(const T & e)
+{
+	BinNodePosi(T) x = search(e);
+	if (!x) return false;
+
+	removeAt(x);
 
 	return true;
 }
