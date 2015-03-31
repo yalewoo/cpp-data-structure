@@ -53,7 +53,7 @@ BinNodePosi(T) BST<T>::search(const T & e)
 template <typename T>
 BinNodePosi(T) BST<T>::insert(const T & e)
 {
-	BinNodePosi(T) p = search(e);
+	BinNodePosi(T) p = BST<T>::search(e);
 	if (p != NULL && p->data == e)	//already exist
 	{
 		return p;
