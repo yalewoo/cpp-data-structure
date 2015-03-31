@@ -10,16 +10,19 @@ template <typename T>
 class AVL : public BST<T>
 {
 protected:
+	using BST<T>::removeAt;
 	using BST<T>::_hot;
 	using BST<T>::_root;
 	using BST<T>::_size;
 	void rotateLL(BinNodePosi(T) p, BinNodePosi(T) q);
 	void rotateRR(BinNodePosi(T) p, BinNodePosi(T) q);
+	void insertFixUp(BinNodePosi(T) p);
+
 public:
 	using BST<T>::search;
 	virtual BinNodePosi(T) insert(const T &);
-	//virtual bool remove(const T &);
-	
+	virtual bool remove(const T &);
+
 };
 
 template <typename T>
@@ -31,13 +34,13 @@ BinNodePosi(T) tallerChild(BinNodePosi(T) x)
 template <typename T>
 void AVL<T>::rotateLL(BinNodePosi(T) p, BinNodePosi(T) q)
 {
-	
+
 	q->lchild = p->rchild;
 	if (p->rchild)
 		p->rchild->parent = q;
 
 	p->rchild = q;
-	
+
 
 	if (q->parent == NULL)
 	{
@@ -59,7 +62,7 @@ void AVL<T>::rotateLL(BinNodePosi(T) p, BinNodePosi(T) q)
 template <typename T>
 void AVL<T>::rotateRR(BinNodePosi(T) p, BinNodePosi(T) q)
 {
-	
+
 	q->rchild = p->lchild;
 	if (p->lchild)
 		p->lchild->parent = q;
@@ -72,7 +75,7 @@ void AVL<T>::rotateRR(BinNodePosi(T) p, BinNodePosi(T) q)
 		q->parent = p;
 		return;
 	}
-	
+
 
 	p->parent = q->parent;
 
@@ -117,6 +120,14 @@ BinNodePosi(T) AVL<T>::insert(const T &e)
 		return x;
 
 	//p is unbanlced node
+	insertFixUp(p);
+
+	return x;
+}
+
+template <typename T>
+void AVL<T>::insertFixUp(BinNodePosi(T) p)
+{
 	BinNodePosi(T) q;
 	q = tallerChild(p);
 	q = tallerChild(q);
@@ -143,13 +154,35 @@ BinNodePosi(T) AVL<T>::insert(const T &e)
 	}
 
 	this->updateHeightAbove(p);
-
-	return x;
 }
 
 
+template <typename T>
+bool AVL<T>::remove(const T & e)
+{
+	BinNodePosi(T) x = search(e);
+	if (!x) return false;
+
+	removeAt(x);
+
+	BinNodePosi(T) p = _hot;
+	BinNodePosi(T) q;
+	while (p != NULL)
+	{
+		q = p;
+		p = p->parent;
+		if (!AvlBalanced(q))
+		{
+			insertFixUp(q);
+		}
+	}
+
+	return true;
+}
+
 int main()
 {
+	BinNodePosi(int) p;
 	AVL<int> b;
 	b.insert(3);
 	b.insert(2);
@@ -163,15 +196,29 @@ int main()
 	b.insert(15);
 	b.insert(14);
 	b.insert(13);
-	b.insert(12);
+	p = b.insert(12);
+	cout << p;
+
 	b.insert(11);
 	b.insert(10);
 	b.insert(9);
 	b.insert(8);
 
+	b.display();
+	cout << endl << endl;
+
+	b.remove(11);
+
+
+
+
+
 
 	b.display();
 	cout << endl << endl;
+
+	cout << b.root()->rchild->lchild << endl;
+	cout << b.root()->rchild->lchild->lchild;
 
 	return 0;
 }
