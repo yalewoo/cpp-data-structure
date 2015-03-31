@@ -41,6 +41,8 @@ int main()
 	cout << endl << b.height() << endl;
 	cout << endl;
 
+	b.remove(67);
+
 	b.display();
 	cout << endl << endl;
 	return 0;
