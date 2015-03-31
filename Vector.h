@@ -1,3 +1,5 @@
+#ifndef MY_VECTOR_H
+#define MY_VECTOR_H
 
 #include <cstdlib>
 using std::rand;
@@ -330,3 +332,5 @@ void Vector<T>::decrease()
 	}
 	delete[] old;
 }
+
+#endif

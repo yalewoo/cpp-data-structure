@@ -1,3 +1,6 @@
+#ifndef MY_BINTREE_H
+#define MY_BINTREE_H
+
 #include "Stack.h"
 #include "Queue.h"
 
@@ -593,3 +596,5 @@ void BinTree<T>::display()
 
 	cout << endl << endl;
 }
+
+#endif

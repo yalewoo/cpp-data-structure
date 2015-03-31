@@ -1,3 +1,6 @@
+#ifndef MY_HEAP_H
+#define MY_HEAP_H
+
 #include "Vector.h"
 
 #define PARENT(i) (((i)-1)/2)
@@ -91,3 +94,5 @@ void Heap<T>::heapsort(int n)
 		precolateDown(0);
 	}
 }
+
+#endif

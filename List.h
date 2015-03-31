@@ -1,3 +1,6 @@
+#ifndef MY_LIST_H
+#define MY_LIST_H
+
 #include <iostream>
 #define Posi(T) ListNode<T>*
 
@@ -196,3 +199,5 @@ Posi(T) List<T>::search(T e)
 	}
 	return x->pred;
 }
+
+#endif

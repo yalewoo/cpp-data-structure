@@ -1,3 +1,6 @@
+#ifndef MY_QUEUE_H
+#define MY_QUEUE_H
+
 #include "List.h"
 
 template <typename T>
@@ -10,3 +13,5 @@ public:
 	T dequeue() { return this->remove(this->first()); }
 	T front() { return this->first->data; }
 };
+
+#endif

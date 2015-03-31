@@ -1,3 +1,6 @@
+#ifndef MY_BST_H
+#define MY_BST_H
+
 #include "Bintree.h"
 
 template <typename T>
@@ -143,3 +146,5 @@ bool BST<T>::remove(const T & e)
 
 	return true;
 }
+
+#endif
