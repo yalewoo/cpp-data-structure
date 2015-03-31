@@ -166,16 +166,24 @@ void AVL<T>::insertFixUp2(BinNodePosi(T) p)
 	q = tallerChild(mid);
 
 	BinNodePosi(T) par = p->parent;
-
-	
+	enum {ROOT, LEFT, RIGHT} ptoc;
+	if (p->parent)
+	{
+		if (p == p->parent->lchild)
+			ptoc = LEFT;
+		else
+			ptoc = RIGHT;
+	}
+	else
+		ptoc = ROOT;
 		
-	BinNodePosi(T) t1;	
-	BinNodePosi(T) t2;	
-	BinNodePosi(T) t3;	
-	BinNodePosi(T) st1;	
-	BinNodePosi(T) st2;	
-	BinNodePosi(T) st3;	
-	BinNodePosi(T) st4;	
+	BinNodePosi(T) t1;
+	BinNodePosi(T) t2;
+	BinNodePosi(T) t3;
+	BinNodePosi(T) st1;
+	BinNodePosi(T) st2;
+	BinNodePosi(T) st3;
+	BinNodePosi(T) st4;
 
 	if (p->lchild && q == p->lchild->lchild)
 	{
@@ -218,15 +226,12 @@ void AVL<T>::insertFixUp2(BinNodePosi(T) p)
 		st4 = mid->rchild;
 	}
 
-	if (p->parent)
+	switch (ptoc)
 	{
-		if (p == p->parent->lchild)
-			p->parent->lchild = t2;
-		else
-			p->parent->rchild = t2;
+		case ROOT : _root = t2; break;
+		case LEFT : par->lchild = t2; break;
+		case RIGHT : par->rchild = t2; break;
 	}
-	else
-		_root = t2;
 	t2->parent = par;
 
 	connect34(t1, t2, t3, st1, st2, st3, st4);
