@@ -42,15 +42,21 @@ public:
 	int capacity() {return _capacity;}
 	bool empty() {return !_size;}
 	T get(int r);	//返回秩为r的元素
+	T operator[](int n) { return _elem[n]; }
 
 	bool put(int r, T e);	//将位置r处元素替换为e
 	bool insert(int r, T e);	//在位置r处插入e 后面的后移
+	bool push_back(T e) { return insert(_size, e); }
 	T remove(int r);	//删除秩为r的元素，并返回
 	bool disordered();	//是否非降序排列（true乱序 false有序）
 
 	void sort();	//按照非降排序
-	int find(T e, int lo, int hi);	//查找e 返回下标
-	int search(T e, int lo, int hi);	//有序查找 返回不大于e的最大元素的位置
+
+	int find(T e);	//查找e 返回下标
+	int search(T e);	//有序查找 返回不大于e的最大元素的位置
+	int findInRange(T e, int lo, int hi);	//查找e 返回下标
+	int searchInRange(T e, int lo, int hi);	//有序查找 返回不大于e的最大元素的位置
+
 	int deduplicate();	//无序向量去重
 	int uniquify();	//有序向量去重
 };
@@ -181,7 +187,7 @@ void Vector<T>::sort()
 
 //无序时查找
 template <typename T>
-int Vector<T>::find(T e, int lo, int hi)
+int Vector<T>::findInRange(T e, int lo, int hi)
 {
 	for (int i = lo; i < hi; ++i)
 	{
@@ -193,11 +199,11 @@ int Vector<T>::find(T e, int lo, int hi)
 
 //有序查找 返回不大于e的最大元素的位置
 template <typename T>
-int Vector<T>::search(T e, int lo, int hi)
+int Vector<T>::searchInRange(T e, int lo, int hi)
 {
 	int mid;
 
-	while (lo < hi - 1)
+	while (lo < hi)
 	{
 		mid = lo + (hi - lo) / 2;
 		if (e < _elem[mid])
@@ -206,10 +212,23 @@ int Vector<T>::search(T e, int lo, int hi)
 		}
 		else
 		{
-			lo = mid;
+			lo = mid + 1;
 		}
 	}
-	return lo;
+
+	return lo-1;
+}
+
+template <typename T>
+int Vector<T>::search(T e)
+{
+	return searchInRange(e, 0, _size);
+}
+
+template <typename T>
+int Vector<T>::find(T e)
+{
+	return findInRange(e, 0, _size);
 }
 
 //无序向量去重 返回重复个数
@@ -219,7 +238,7 @@ int Vector<T>::deduplicate()
 	int oldsize = _size;
 	for (int i = 0; i < _size; ++i)
 	{
-		if (find(_elem[i], 0, i) >= 0)
+		if (findInRange(_elem[i], 0, i) >= 0)
 			remove(i);
 	}
 	return oldsize - _size;
