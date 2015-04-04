@@ -17,28 +17,30 @@ int main()
 {
 	Vector<int> a(5);
 	a.insert(0, 2);
-	a.insert(0, 3);
+	a.insert(0, 6);
 	a.insert(0, 7);
-	cout << a.capacity() << endl;
-	a.insert(0, 4);
-	a.insert(0, 4);
-	a.insert(0, 5);
-	a.insert(0, 9);
-	a.insert(0, 9);
-	a.insert(0, 5);
-	a.insert(0, 5);
-	a.insert(0, 9);
-	a.insert(0, 9);
-	a.insert(0, 5);
-	cout << a.capacity() << endl;
+	// cout << a.capacity() << endl;
+	// a.insert(0, 4);
+	// a.insert(0, 4);
+	// a.insert(0, 5);
+	// a.insert(0, 9);
+	// a.insert(0, 9);
+	// a.insert(0, 5);
+	// a.insert(0, 5);
+	// a.insert(0, 9);
+	// a.insert(0, 9);
+	// a.insert(0, 5);
+	// cout << a.capacity() << endl;
 
 	MyPrint<int> visit;
 
-	a.travser(visit);
+	// a.travser(visit);
 	a.sort();
 	a.travser(visit);
 
-	//cout << a.find(2, 0, 1);
+	cout << a.search(1);
+	cout << a.search(2);
+	cout << a.search(3);
 	//cout << "uniquify " << a.uniquify() << endl;
 	//cout << "deduplicate " << a.deduplicate() << endl;
 	
