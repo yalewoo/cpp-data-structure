@@ -38,9 +38,10 @@ int main()
 	a.sort();
 	a.travser(visit);
 
-	cout << a.search(1);
-	cout << a.search(2);
-	cout << a.search(3);
+	cout << endl;
+	cout << a.search(1) << endl;
+	cout << a.search(2) << endl;
+	cout << a.search(3) << endl;
 	//cout << "uniquify " << a.uniquify() << endl;
 	//cout << "deduplicate " << a.deduplicate() << endl;
 	
