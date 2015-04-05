@@ -42,7 +42,9 @@ public:
 	int capacity() {return _capacity;}
 	bool empty() {return !_size;}
 	T get(int r);	//返回秩为r的元素
-	T operator[](int n) { return _elem[n]; }
+	T & operator[](int n) { return _elem[n]; }
+	T last() { return _elem[_size-1]; }
+	T first() { return _elem[0]; }
 
 	bool put(int r, T e);	//将位置r处元素替换为e
 	bool insert(int r, T e);	//在位置r处插入e 后面的后移
@@ -156,10 +158,10 @@ template <typename T>
 void Vector<T>::bubbleSort()
 {
 	int i, j, temp;
-	int flag;
+	
 	for (i = _size-1; i > 0; --i)
 	{
-		flag = 0;
+		int flag = 0;
 		for (j = 0; j < i; ++j)
 		{
 			if (_elem[j] > _elem[j+1])
@@ -201,11 +203,9 @@ int Vector<T>::findInRange(T e, int lo, int hi)
 template <typename T>
 int Vector<T>::searchInRange(T e, int lo, int hi)
 {
-	int mid;
-
 	while (lo < hi)
 	{
-		mid = lo + (hi - lo) / 2;
+		int mid = lo + (hi - lo) / 2;
 		if (e < _elem[mid])
 		{
 			hi = mid;
@@ -316,6 +316,8 @@ void Vector<T>::merge(int lo, int mid, int hi)
 	}
 	while (i < lenL)
 		_elem[k++] = L[i++];
+
+	delete[] L;
 }
 template <typename T>
 void Vector<T>::mergesort(int lo, int hi)
