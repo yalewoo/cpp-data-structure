@@ -4,7 +4,11 @@
 #include <cstdlib>
 using std::rand;
 
-#define DEFAULT_CAPACITY 5
+#define DEFAULT_CAPACITY 20
+
+enum sort_method{
+	BUBBLE, INSERT, QUICK, MERGE
+};
 
 template <typename T> class Vector{	
 	
@@ -44,7 +48,6 @@ public:
 	T get(int r);	//返回秩为r的元素
 	T & operator[](int n) { return _elem[n]; }
 	T last() { return _elem[_size-1]; }
-	T first() { return _elem[0]; }
 
 	bool put(int r, T e);	//将位置r处元素替换为e
 	bool insert(int r, T e);	//在位置r处插入e 后面的后移
@@ -52,7 +55,7 @@ public:
 	T remove(int r);	//删除秩为r的元素，并返回
 	bool disordered();	//是否非降序排列（true乱序 false有序）
 
-	void sort();	//按照非降排序
+	void sort(enum sort_method method = QUICK);	//按照非降排序
 
 	int find(T e);	//查找e 返回下标
 	int search(T e);	//有序查找 返回不大于e的最大元素的位置
@@ -88,7 +91,7 @@ void Vector<T>::travser(VST &visit)
 template <typename T>
 bool Vector<T>::insert(int r, T e)
 {
-	if (r > _size)
+	if (r > _size || r < 0)
 		return false;
 	if (_size == _capacity)
 		expand();
@@ -164,7 +167,7 @@ void Vector<T>::bubbleSort()
 		int flag = 0;
 		for (j = 0; j < i; ++j)
 		{
-			if (_elem[j] > _elem[j+1])
+			if (_elem[j+1] < _elem[j])
 			{
 				temp = _elem[j];
 				_elem[j] = _elem[j+1];
@@ -180,11 +183,24 @@ void Vector<T>::bubbleSort()
 
 //按照非降排序
 template <typename T>
-void Vector<T>::sort()
+void Vector<T>::sort(enum sort_method method)
 {
-	//bubbleSort();
-	//quicksort(0, _size);
-	mergesort(0, _size);
+	switch (method)
+	{
+	case BUBBLE:
+		bubbleSort();
+		break;
+	case INSERT:
+		break;
+	case QUICK:
+		quicksort(0, _size);
+		break;
+	case MERGE:
+		mergesort(0, _size);
+		break;
+	default:
+		break;
+	}
 }
 
 //无序时查找
@@ -270,12 +286,12 @@ int Vector<T>::partition(int lo, int hi)
 
 	while (lo < hi)
 	{
-		while (hi > lo && _elem[hi] >= x)
+		while (hi > lo && !(_elem[hi] < x))
 			--hi;
 		_elem[lo] = _elem[hi];
 
 
-		while (lo < hi && _elem[lo] <= x)
+		while (lo < hi && !(x < _elem[lo]))
 			++lo;
 		_elem[hi] = _elem[lo];
 
@@ -309,7 +325,7 @@ void Vector<T>::merge(int lo, int mid, int hi)
 	int k = lo;
 	while (i < lenL && j < hi)
 	{
-		if (L[i] <= _elem[j])
+		if (!(_elem[j] < L[i]))
 			_elem[k++] = L[i++];
 		else
 			_elem[k++] = _elem[j++];
