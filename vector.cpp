@@ -20,16 +20,16 @@ int main()
 	a.insert(0, 6);
 	a.insert(0, 7);
 	// cout << a.capacity() << endl;
-	// a.insert(0, 4);
-	// a.insert(0, 4);
-	// a.insert(0, 5);
-	// a.insert(0, 9);
-	// a.insert(0, 9);
-	// a.insert(0, 5);
-	// a.insert(0, 5);
-	// a.insert(0, 9);
-	// a.insert(0, 9);
-	// a.insert(0, 5);
+	a.insert(0, 4);
+	a.insert(0, 4);
+	a.insert(0, 5);
+	a.insert(0, 9);
+	a.insert(0, 9);
+	a.insert(0, 5);
+	a.insert(0, 5);
+	a.insert(0, 9);
+	a.insert(0, 9);
+	a.insert(0, 5);
 	// cout << a.capacity() << endl;
 
 	MyPrint<int> visit;

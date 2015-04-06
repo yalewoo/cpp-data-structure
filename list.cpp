@@ -34,6 +34,8 @@ int main()
 	l.sort();
 	l.insertAfter(l.search(7), 7);
 	l.travser(visit);
+
+
 	return 0;
 }
 
