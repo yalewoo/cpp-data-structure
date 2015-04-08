@@ -151,7 +151,7 @@
 
 ###遍历
 
-* **template <typename VST> void travser(VST &visit);**
+* **void travser(VST &visit);**
  * 遍历，对结点中每个元素执行visit()
 
 
@@ -205,6 +205,120 @@
 
 #BinTree 二叉树
 ###概述
-* ****
+* **每个结点保存了指向左右孩子和父亲的指针lchild、rchild、parent**
 
-#未完待续
+###构造和析构函数
+* **BinTree(BinNodePosi(T) root);**
+ * 指定根结点的构造方式
+* **BinTree();**
+ * 默认构造函数，size初始化为0，根结点为NULL
+* **virtual ~BinTree();**
+ * 析构函数 依次delete所有节点
+
+###查询函数
+* **int size() const;**
+ * 返回结点个数。
+* **int height() const;**
+ * 返回树的高度。空树返回0
+* **bool empty() const;**
+ * 判断树是否为空
+* **BinNodePosi(T) root() const;**
+ * 返回根结点指针
+
+###树节点操作
+* **BinNodePosi(T) insertAsLC(BinNodePosi(T) x, T const & e);**
+ * 把元素e作为x的左孩子插入
+* **BinNodePosi(T) insertAsRC(BinNodePosi(T) x, T const & e);**
+ * 把元素e作为x的右孩子插入
+* **BinNodePosi(T) attachAsLC(BinNodePosi(T) x, BinTree<T>* & S);**
+ * 把树S作为x的左子树插入
+* **BinNodePosi(T) attachAsRC(BinNodePosi(T) x, BinTree<T>* & S);**
+ * 把树S作为x的右子树插入
+* **virtual int remove(BinNodePosi(T) x);**
+ * 删除x结点
+* **BinNodePosi(T) secede(BinNodePosi(T) x);**
+ * 删除以x为根的子树，返回子树
+
+###树的遍历
+* **void travPre(VST &v);**
+ * 先序遍历
+* **void travIn(VST &v);**
+ * 中序遍历
+* **void travPost(VST &v);**
+ * 后序遍历
+* **void travLevel(VST &v);**
+ * 层次遍历
+* **void display();**
+ * 以一种较为直观的方式显示整棵树
+
+###保护成员函数和宏
+* **void updateHeightAbove(BinNodePosi(T) x);**
+ * 更新x结点以及x祖先的高度信息
+* **#define stature(p) ((p) ? (p)->height : -1)**
+ * 返回结点的高度。空结点高度为-1
+
+
+#BST 二叉搜索树
+###概述
+* **从二叉树BinTree派生而来**
+* **树中不存放重复元素**
+
+###新增接口
+* **virtual BinNodePosi(T) search(const T &e);**
+ * 查找，返回e所在的结点位置。找不到返回NULL
+* **virtual BinNodePosi(T) insert(const T &e);**
+ * 插入元素e。若已存在，返回e的位置
+* **virtual bool remove(const T &e);**
+ * 删除元素e。若e不存在，返回false
+
+
+#AVL二查搜索平衡树
+###概述
+* **从BST派生而来**
+* **不存放重复元素**
+
+###实现接口
+* **search接口从BST继承：BinNodePosi(T) search(const T &e);**
+ * 查找，返回e所在的结点位置。找不到返回NULL
+* **virtual BinNodePosi(T) insert(const T &e);**
+ * 插入元素e。若已存在，返回e的位置
+ * 插入后调整至平衡
+* **virtual bool remove(const T &e);**
+ * 删除元素e。若e不存在，返回false
+ * 删除后调整树至平衡
+
+
+#SplayBinTree 伸展树
+###概述
+* **从BST派生而来**
+* **不存放重复元素**
+
+###实现接口
+* **BinNodePosi(T) search(const T &e);**
+ * 查找，返回e所在的结点位置。找不到返回NULL
+ * 查找到的结点或找不到时空结点的父节点会被伸展至根
+* **BinNodePosi(T) insert(const T &e);**
+ * 插入元素e。若已存在，返回e的位置
+ * 新插入的结点伸展到根
+* **bool remove(const T &e);**
+ * 删除元素e。若e不存在，返回false
+ * 被删除结点的父节点伸展到根
+
+
+#B树
+###概述
+* **内部变量包含Vector类对象**
+
+###构造函数和析构函数
+* **BTree(int order);
+ * 指定树的阶。每个结点的分支数范围 [(order+1)/2, order]
+
+###实现接口
+* **BTNodePosi(T) search(const T & e);**
+ * 查找元素e，返回e所在的结点的位置
+* **bool insert(const T & e);**
+ * 插入元素e，同时保持B树的性质
+* **bool remove(const T & e);**
+ * 删除元素e，同时保持B树的性质
+* **void display();**
+ * 显示整棵B树。（显示方式及其丑陋）
