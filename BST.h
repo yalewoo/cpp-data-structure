@@ -83,7 +83,10 @@ template <typename T>
 void BST<T>::transplant(BinNodePosi(T) p, BinNodePosi(T) c)
 {
 	if (p == _root)
+	{
 		_root = c;
+		return;
+	}
 
 	if (p->parent->lchild == p)
 		p->parent->lchild = c;

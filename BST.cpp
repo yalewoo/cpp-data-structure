@@ -43,15 +43,18 @@ int main()
 
 	// b.remove(67);
 
-	b.insert(7);
-	b.insert(6);
-	b.insert(5);
-	b.insert(4);
-	b.insert(3);
+	// b.insert(7);
+	// b.insert(6);
+	// b.insert(5);
+	// b.insert(4);
+	// b.insert(3);
 	b.insert(2);
 	b.insert(1);
 
 	b.display();
 	cout << endl << endl;
+
+	b.remove(2);
+	b.display();
 	return 0;
 }
