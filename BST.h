@@ -85,6 +85,8 @@ void BST<T>::transplant(BinNodePosi(T) p, BinNodePosi(T) c)
 	if (p == _root)
 	{
 		_root = c;
+		if (c)
+			c->parent = 0;
 		return;
 	}
 
@@ -121,6 +123,12 @@ void BST<T>::removeAt(BinNodePosi(T) x)
 		{
 			_hot = x;
 			transplant(x, p);
+			if (p)
+			{
+				p->lchild = x->lchild;
+				p->lchild->parent = p;
+			}
+			
 		}
 		else
 		{

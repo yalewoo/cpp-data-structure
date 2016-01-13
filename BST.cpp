@@ -50,6 +50,7 @@ int main()
 	// b.insert(3);
 	b.insert(2);
 	b.insert(1);
+	b.insert(3);
 
 	b.display();
 	cout << endl << endl;
