@@ -33,59 +33,73 @@ BinNodePosi(T) tallerChild(BinNodePosi(T) x)
 }
 
 template <typename T>
-void AVL<T>::rotateLL(BinNodePosi(T) p, BinNodePosi(T) q)
+void AVL<T>::rotateLL(BinNodePosi(T) t1, BinNodePosi(T) t2)
 {
+	//t2 --> st2
+	t2->lchild = t1->rchild;
 
-	q->lchild = p->rchild;
-	if (p->rchild)
-		p->rchild->parent = q;
+	//st2 --> t1
+	if (t1->rchild)
+		t1->rchild->parent = t2;
 
-	p->rchild = q;
+	//t1 --> t2
+	t1->rchild = t2;
 
-
-	if (q->parent == NULL)
+	//父节点 --> t1（树根情况）
+	if (t2->parent == NULL)
 	{
-		p->parent = NULL;
-		this->_root = p;
+		t1->parent = NULL;
+		this->_root = t1;
 
-		q->parent = p;
+		t2->parent = t1;
 		return;
 	}
 
-	p->parent = q->parent;
-	if (q->parent->lchild == q)
-		q->parent->lchild = p;
-	else
-		q->parent->rchild = p;
+	//t1 --> 父节点
+	t1->parent = t2->parent;
 
-	q->parent = p;
+	//父节点 --> t1（非树根）
+	if (t2->parent->lchild == t2)
+		t2->parent->lchild = t1;
+	else
+		t2->parent->rchild = t1;
+
+	//t2 --> t1
+	t2->parent = t1;
 }
 template <typename T>
-void AVL<T>::rotateRR(BinNodePosi(T) p, BinNodePosi(T) q)
+void AVL<T>::rotateRR(BinNodePosi(T) t2, BinNodePosi(T) t1)
 {
+	//t1 --> st2
+	t1->rchild = t2->lchild;
 
-	q->rchild = p->lchild;
-	if (p->lchild)
-		p->lchild->parent = q;
+	//st2 --> t1
+	if (t2->lchild)
+		t2->lchild->parent = t1;
 
-	p->lchild = q;
-	if (q->parent == NULL)
+	//t2 --> t1
+	t2->lchild = t1;
+
+	//父节点 --> t2（树根）
+	if (t1->parent == NULL)
 	{
-		this->_root = p;
-		p->parent = NULL;
-		q->parent = p;
+		this->_root = t2;
+		t2->parent = NULL;
+		t1->parent = t2;
 		return;
 	}
 
+	//t2 --> 父节点
+	t2->parent = t1->parent;
 
-	p->parent = q->parent;
-
-	if (q->parent->lchild == q)
-		q->parent->lchild = p;
+	//父节点 --> t2（非树根）
+	if (t1->parent->lchild == t1)
+		t1->parent->lchild = t2;
 	else
-		q->parent->rchild = p;
+		t1->parent->rchild = t2;
 
-	q->parent = p;
+	//t1 --> t2
+	t1->parent = t2;
 }
 
 template <typename T>

@@ -39,6 +39,11 @@ int main()
 	b.display();
 	cout << endl << endl;
 
+	b.remove(7);
+
+	b.display();
+	cout << endl << endl;
+
 
 	return 0;
 }
