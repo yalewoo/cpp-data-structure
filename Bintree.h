@@ -117,7 +117,8 @@ protected:
 
 	int updateHeight(BinNodePosi(T) x); //更新结点x的高度
 	void updateHeightAbove(BinNodePosi(T) x); //更新x以及x的所有祖先元素的高度
-	void updateDistanceToRoot(BinNodePosi(T) x);	//更新x结点距离根节点的距离
+    void updateDistanceToRoot(BinNodePosi(T) x);	//更新x结点及其孩子距离根节点的距离
+    void calculatePosition();   //计算结点位置 结果存放在每个结点的horizontal_position和distance_to_root中
 public:
 	BinTree(BinNodePosi(T) root);
 	BinTree();
@@ -474,27 +475,37 @@ void BinTree<T>::updateDistanceToRoot(BinNodePosi(T) x)
 	}
 }
 
+template <typename T>
+void BinTree<T>::calculatePosition()
+{
+    //计算垂直位置
+    updateDistanceToRoot(_root);
+
+
+    //计算水平位置
+    int count = 0;
+    BinNodePosi(T) x = _root;
+    //找到中序遍历的第一个结点
+    while (x->lchild != NULL)
+        x = x->lchild;
+    //按照中序遍历的次序记录结点访问次序
+    while (x != NULL)
+    {
+        x->horizontal_position = ++count;
+        x->horizontal_position *= 4;    //水平位置放缩4倍 命令行显示时结点之间的空隙4个字符
+        x = x->succ();
+    }
+
+
+}
 
 template <typename T>
 void BinTree<T>::display()
 {
-	int count = 0;
-	BinNodePosi(T) x = _root;
-	while (x->lchild != NULL)
-		x = x->lchild;
-
-	while (x != NULL)
-	{
-		x->horizontal_position = ++count;
-		x->horizontal_position *= 4;
-		x = x->succ();
-	}
-
-	updateDistanceToRoot(_root);
-
+    calculatePosition();
 
 	Queue<BinNodePosi(T)> q;
-	x = _root;
+    BinNodePosi(T) x = _root;
 	
 	q.enqueue(x);
 
@@ -526,7 +537,7 @@ void BinTree<T>::display()
 			}
 			
 			int firstprint = 1;
-			for (; i < x->horizontal_position; ++i)
+            for (; i < x->horizontal_position; ++i)
 			{
 				if (firstprint)
 				{
@@ -542,7 +553,7 @@ void BinTree<T>::display()
 			long long int tellpppp = cout.tellp() - tmpposi;
 			levelcount += (int) (tellpppp);
 
-			levelcount += x->horizontal_position - levelcount;
+            levelcount += x->horizontal_position - levelcount;
 
 			for (i = levelcount; i < posirchild(x); ++i)
 			{
