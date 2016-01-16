@@ -32,7 +32,7 @@ class BTree
 protected:
 	int _size;
 	int _order;
-	BTNodePosi(T) _root;
+	BTNodePosi(T) _root;	//根节点
 	BTNodePosi(T) _hot;
 	void solveOverflow(BTNodePosi(T));
 	void solveUnderflow(BTNodePosi(T));
@@ -50,12 +50,16 @@ BTNodePosi(T) BTree<T>::search(const T & e)
 	BTNodePosi(T) p = _root;
 	_hot = NULL;
 
+	//反复循环直到到达外部结点 或者找到时直接return
 	while (p)
 	{
+		//向量的search接口返回不大于e的最后一个元素
 		int n = p->key.search(e);
+
+		//已经找到
 		if (p->key[n] == e)
 			return p;
-
+		//否则 下降一层
 		_hot = p;
 		p = p->child[n+1];
 	}
@@ -64,24 +68,29 @@ BTNodePosi(T) BTree<T>::search(const T & e)
 template <typename T>
 bool BTree<T>::insert(const T & e)
 {
+	//不允许重复元素
 	if (search(e)) return false;
 
+	//search执行后 _hot指向的是最终结点的父节点（search失败时指向外部结点的父节点 也就是叶子节点）
 	BTNodePosi(T) p = _hot;
 	if (!p)
-	{
+	{	//树为空的情况
 		p = new BTNode<T>;
 		_root = p;
 		p->key.push_back(e);
 		p->child.push_back(NULL);
+		++_size;
 		return true;
 	}
+	//树不为空时，将e插入到叶节点的适当位置
 	int n = p->key.search(e);
 	p->key.insert(n+1, e);
-	p->child.push_back(NULL);
+	p->child.push_back(NULL);	//叶节点的孩子是外部结点 全部为NULL 因此直接插入到最后面
 
 	++_size;
 
 	BTNodePosi(T) par;
+	//插入结点后 从该结点到其祖先结点 依次检测是否上溢并修复
 	while (p && p->child.size() > _order)
 	{
 		par = p->parent;
@@ -95,10 +104,12 @@ bool BTree<T>::insert(const T & e)
 template <typename T>
 bool BTree<T>::remove(const T & e)
 {
+	//找到e的位置
 	BTNodePosi(T) p = search(e);
 	if (!p) return false;
 	int n = p->key.search(e);
 
+	//若e所在结点不是叶子结点 用它的中序意义后继替代它 之后只需删除位于叶子节点的那个后继
 	if (p->child[0])
 	{
 		BTNodePosi(T) q = p->child[n+1];
@@ -111,11 +122,12 @@ bool BTree<T>::remove(const T & e)
 		p = q;
 	}
 	
+	//现在待删除节点都位于叶子结点 开始删除
 	p->key.remove(n);
 	p->child.remove(n);
 	--_size;
 	
-
+	//删除元素后解决下溢问题
 	if (p != _root && p->child.size() < (_order+1)/2)
 	{
 		solveUnderflow(p);
@@ -124,13 +136,18 @@ bool BTree<T>::remove(const T & e)
 	return true;
 }
 
+//解决上溢问题 即pn的分支数超过了B树的阶_order
 template <typename T>
 void BTree<T>::solveOverflow(BTNodePosi(T) pn)
 {
 	BTNodePosi(T) p = pn->parent;
-	int n = (_order-1)/2;
+	int n = (_order-1)/2;	//n是最少结点数
 
+	//下面把pn结点分裂为lc和rc两个结点和中间一个只有一个元素的结点
+	//lc [0,n)  中间结点 [n]  rc [n+1,size]
 	int i;
+
+	//左半部分
 	BTNodePosi(T) lc = new BTNode<T>;
 	for (i = 0; i < n; ++i)
 	{
@@ -144,6 +161,7 @@ void BTree<T>::solveOverflow(BTNodePosi(T) pn)
 	for (i = 0; i < lc->child.size(); ++i)
 		if (lc->child[i]) lc->child[i]->parent = lc;
 
+	//右半部分
 	BTNodePosi(T) rc = new BTNode<T>;
 	for (i = n+1; i < pn->key.size(); ++i)
 	{
@@ -159,11 +177,12 @@ void BTree<T>::solveOverflow(BTNodePosi(T) pn)
 	
 
 	if (!p)
-	{
+	{	//上溢结点是树根节点的情况
 		p = new BTNode<T>;
 		_root = p;
 	}
 
+	//把中间节点插入到pn的父节点 其左右指针指向lc和rc两部分
 	lc->parent = p;
 	rc->parent = p;
 	int n1 = p->key.search(pn->key[n]);
@@ -177,16 +196,19 @@ void BTree<T>::solveOverflow(BTNodePosi(T) pn)
 template <typename T>
 void BTree<T>::solveUnderflow(BTNodePosi(T) q)
 {
+	//没有下溢则退出
 	if (q->child.size() >= (_order+1)/2) return;
 
 	if (q == _root)
 	{
+
 		if (q->key.empty())
 		{
+			//树根节点删除了最后一个元素变为空树的情况
 			_root = q->child[0];
 			delete q;
 		}
-		return;
+		return;	//树根节点最少可以是1个结点 没有下溢的问题
 	}
 
 
@@ -200,6 +222,8 @@ void BTree<T>::solveUnderflow(BTNodePosi(T) q)
 
 	BTNodePosi(T) lc;
 	BTNodePosi(T) rc;
+
+	//q的左兄弟可以借出结点
 	if (n > 0 && p->child[n-1]->child.size() > (_order+1)/2)
 	{
 		lc = p->child[n-1];
@@ -213,6 +237,7 @@ void BTree<T>::solveUnderflow(BTNodePosi(T) q)
 		lc->child.remove(lc->child.size() - 1);
 		return;
 	}
+	//q的右兄弟可以借出结点
 	if (n < p->child.size()-1 && p->child[n+1]->child.size() > (_order+1)/2)
 	{
 		rc = p->child[n+1];
@@ -227,8 +252,10 @@ void BTree<T>::solveUnderflow(BTNodePosi(T) q)
 		return;
 	}
 
+	//q的左右兄弟都不能借出 则合并
 	if (n > 0)
 	{
+		//有左兄弟时，与左兄弟合并
 		lc = p->child[n-1];
 		lc->key.push_back(p->key[n-1]);
 		int i;
@@ -245,6 +272,7 @@ void BTree<T>::solveUnderflow(BTNodePosi(T) q)
 	}
 	else
 	{
+		//否则和右兄弟合并
 		rc = p->child[n+1];
 
 		q->key.push_back(p->key[n]);
@@ -261,6 +289,7 @@ void BTree<T>::solveUnderflow(BTNodePosi(T) q)
 		delete rc;
 	}
 
+	//合并后，父节点的分支数减少，继续解决父节点的下溢问题
 	solveUnderflow(p);
 
 }
