@@ -75,6 +75,19 @@ void RBT<T>::solveDoubleRed(BinNodePosi(T) x)
 	
 	if (COLOR(u) == BLACK)
 	{
+		BinNodePosi(T) par = g->parent;
+		enum {ROOT, LEFT, RIGHT} ptoc;
+		if (g->parent)
+		{
+			if (g == g->parent->lchild)
+				ptoc = LEFT;
+			else
+				ptoc = RIGHT;
+		}
+		else
+			ptoc = ROOT;
+
+
 		BinNodePosi(T) t1;
 		BinNodePosi(T) t2;
 		BinNodePosi(T) t3;
@@ -83,7 +96,7 @@ void RBT<T>::solveDoubleRed(BinNodePosi(T) x)
 		BinNodePosi(T) st3;
 		BinNodePosi(T) st4;
 
-		if (x == g->lchild->lchild)
+		if (g->lchild && x == g->lchild->lchild)
 		{
 			t1 = x;
 			t2 = p;
@@ -93,7 +106,7 @@ void RBT<T>::solveDoubleRed(BinNodePosi(T) x)
 			st3 = p->rchild;
 			st4 = g->rchild;
 		}
-		else if (x == g->lchild->rchild)
+		else if (g->lchild && x == g->lchild->rchild)
 		{
 			t1 = p;
 			t2 = x;
@@ -103,7 +116,7 @@ void RBT<T>::solveDoubleRed(BinNodePosi(T) x)
 			st3 = x->rchild;
 			st4 = g->rchild;
 		}
-		else if (x == g->rchild->lchild)
+		else if (g->rchild && x == g->rchild->lchild)
 		{
 			t1 = g;
 			t2 = x;
@@ -124,7 +137,17 @@ void RBT<T>::solveDoubleRed(BinNodePosi(T) x)
 			st4 = x->rchild;
 		}
 
+		t2->parent = par;
+		switch (ptoc)
+		{
+			case ROOT : _root = t2; break;
+			case LEFT : par->lchild = t2; break;
+			case RIGHT : par->rchild = t2; break;
+		}
+
 		connect34(t1, t2, t3, st1, st2, st3, st4);
+
+		
 
 		t2->color = BLACK;
 		t1->color = RED;
@@ -136,7 +159,9 @@ void RBT<T>::solveDoubleRed(BinNodePosi(T) x)
 		u->color = BLACK;
 		g->color = RED;
 
-		if (COLOR(g->parent) == RED)
+		if (g->parent == 0)
+			g->color = BLACK;
+		else if (COLOR(g->parent) == RED)
 			solveDoubleRed(g);
 	}
 
