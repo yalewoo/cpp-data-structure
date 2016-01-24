@@ -20,6 +20,11 @@ using std::endl;
 #define posilchild(p) ((p)->lchild ? (p)->lchild->horizontal_position : (p)->horizontal_position)
 #define posirchild(p) ((p)->rchild ? (p)->rchild->horizontal_position : (p)->horizontal_position)
 
+
+enum RB_COLOR{
+	RED, BLACK
+};
+
 //二叉树结点数据结构
 template <typename T>
 class BinNode
@@ -29,6 +34,8 @@ public:
 	BinNodePosi(T) parent;	//父节点指针
 	BinNodePosi(T) lchild;	//左孩子指针
 	BinNodePosi(T) rchild;	//右孩子指针
+
+	enum RB_COLOR color;	//颜色 在红黑树中使用
 
 	int height;	//记录该结点高度
 
@@ -119,6 +126,8 @@ protected:
 	void updateHeightAbove(BinNodePosi(T) x); //更新x以及x的所有祖先元素的高度
     void updateDistanceToRoot(BinNodePosi(T) x);	//更新x结点及其孩子距离根节点的距离
     void calculatePosition();   //计算结点位置 结果存放在每个结点的horizontal_position和distance_to_root中
+
+    BinNodePosi(T) siblingOf(BinNodePosi(T) x);	//返回结点x的兄弟结点
 public:
 	BinTree(BinNodePosi(T) root);
 	BinTree();
@@ -151,6 +160,17 @@ public:
 	void display();
 };
 
+template <typename T>
+BinNodePosi(T) BinTree<T>::siblingOf(BinNodePosi(T) x)
+{
+	if (x->parent == 0)
+		return 0;
+
+	if (x->parent->lchild == x)
+		return x->parent->rchild;
+	else
+		return x->parent->lchild;
+}
 
 template <typename T>
 BinTree<T>::BinTree()
