@@ -18,7 +18,8 @@ protected:
 	void rotateRR(BinNodePosi(T) p, BinNodePosi(T) q);
 	void insertFixUp(BinNodePosi(T) p);	//By rotate
 	void insertFixUp2(BinNodePosi(T) p);	//By connect34
-	void connect34(BinNodePosi(T) t1, BinNodePosi(T) t2, BinNodePosi(T) t3, BinNodePosi(T) st1, BinNodePosi(T) st2, BinNodePosi(T) st3, BinNodePosi(T) st4);
+	using BST<T>::connect34;
+	
 public:
 	using BST<T>::search;
 	virtual BinNodePosi(T) insert(const T &);
@@ -250,19 +251,7 @@ void AVL<T>::insertFixUp2(BinNodePosi(T) p)
 
 	connect34(t1, t2, t3, st1, st2, st3, st4);
 }
-template <typename T>
-void AVL<T>::connect34(BinNodePosi(T) t1, BinNodePosi(T) t2, BinNodePosi(T) t3, BinNodePosi(T) st1, BinNodePosi(T) st2, BinNodePosi(T) st3, BinNodePosi(T) st4)
-{
-	t1->lchild = st1; if (st1) st1->parent = t1;
-	t1->rchild = st2; if (st2) st2->parent = t1;
-	t3->lchild = st3; if (st3) st3->parent = t3;
-	t3->rchild = st4; if (st4) st4->parent = t3;
-	t2->lchild = t1; t1->parent = t2;
-	t2->rchild = t3; t3->parent = t2;
 
-	this->updateHeightAbove(t1);
-	this->updateHeightAbove(t3);
-}
 
 
 template <typename T>

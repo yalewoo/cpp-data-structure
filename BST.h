@@ -19,6 +19,8 @@ protected:
 	BinNodePosi(T) _hot;	//parent of (x returned by search)
 	void transplant(BinNodePosi(T) p, BinNodePosi(T) c);	//move single node c to p
 
+	void connect34(BinNodePosi(T) t1, BinNodePosi(T) t2, BinNodePosi(T) t3, BinNodePosi(T) st1, BinNodePosi(T) st2, BinNodePosi(T) st3, BinNodePosi(T) st4);
+
 };
 
 template <typename T>
@@ -98,7 +100,8 @@ void BST<T>::transplant(BinNodePosi(T) p, BinNodePosi(T) c)
 	if (c) c->parent = p->parent;
 }
 
-//删除结点x 返回替代x的结点
+//删除结点x 若有左右孩子，与中序后继交换再删 
+//返回实际删除的结点的替代者  _hot指向实际删除节点替代者的父节点
 template <typename T>
 BinNodePosi(T) BST<T>::removeAt(BinNodePosi(T) x)
 {
@@ -119,13 +122,13 @@ BinNodePosi(T) BST<T>::removeAt(BinNodePosi(T) x)
 	else	//two children
 	{
 		BinNodePosi(T) p = x->succ();
-		suc = p;
 
-
+		
 		//p has no lchild
 		if (p->parent == x)
 		{
-			_hot = x;
+			suc = p;
+			_hot = x->parent;
 			transplant(x, p);
 			if (p)
 			{
@@ -136,10 +139,9 @@ BinNodePosi(T) BST<T>::removeAt(BinNodePosi(T) x)
 		}
 		else
 		{
-			if (!p->rchild)
-				_hot = p->parent;
-			else
-				_hot = p->rchild;
+			suc = p->rchild;
+			_hot = p->parent;
+
 			transplant(p, p->rchild);
 			transplant(x, p);
 
@@ -162,6 +164,20 @@ bool BST<T>::remove(const T & e)
 	removeAt(x);
 
 	return true;
+}
+
+template <typename T>
+void BST<T>::connect34(BinNodePosi(T) t1, BinNodePosi(T) t2, BinNodePosi(T) t3, BinNodePosi(T) st1, BinNodePosi(T) st2, BinNodePosi(T) st3, BinNodePosi(T) st4)
+{
+	t1->lchild = st1; if (st1) st1->parent = t1;
+	t1->rchild = st2; if (st2) st2->parent = t1;
+	t3->lchild = st3; if (st3) st3->parent = t3;
+	t3->rchild = st4; if (st4) st4->parent = t3;
+	t2->lchild = t1; t1->parent = t2;
+	t2->rchild = t3; t3->parent = t2;
+
+	this->updateHeightAbove(t1);
+	this->updateHeightAbove(t3);
 }
 
 #endif
