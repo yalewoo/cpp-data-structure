@@ -101,7 +101,7 @@ void BST<T>::transplant(BinNodePosi(T) p, BinNodePosi(T) c)
 }
 
 //删除结点x 若有左右孩子，与中序后继交换再删 
-//返回实际删除的结点的替代者  _hot指向实际删除节点替代者的父节点
+//返回实际删除的结点的替代者指针  _hot指向删除后实际删除节点替代者的父节点
 template <typename T>
 BinNodePosi(T) BST<T>::removeAt(BinNodePosi(T) x)
 {
@@ -125,31 +125,17 @@ BinNodePosi(T) BST<T>::removeAt(BinNodePosi(T) x)
 
 		
 		//p has no lchild
-		if (p->parent == x)
-		{
-			suc = p;
-			_hot = x->parent;
-			transplant(x, p);
-			if (p)
-			{
-				p->lchild = x->lchild;
-				p->lchild->parent = p;
-			}
-			
-		}
-		else
-		{
-			suc = p->rchild;
-			_hot = p->parent;
+		
+		suc = p->rchild;
+		_hot = p->parent;
 
-			transplant(p, p->rchild);
-			transplant(x, p);
 
-			p->lchild = x->lchild;
-			p->lchild->parent = p;
-			p->rchild = x->rchild;
-			p->rchild->parent = p;
-		}
+		T tmp = x->data;
+		x->data = p->data;
+		p->data = tmp;
+
+		transplant(p, p->rchild);
+		
 	}
 	--_size;
 	this->updateHeightAbove(_hot);
@@ -162,6 +148,7 @@ bool BST<T>::remove(const T & e)
 	if (!x) return false;
 
 	removeAt(x);
+	delete x;
 
 	return true;
 }
