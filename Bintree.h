@@ -122,7 +122,7 @@ protected:
 	int _size;	//记录该二叉树结点个数
 	BinNodePosi(T) _root;	//二叉树树根节点指针
 
-	int updateHeight(BinNodePosi(T) x); //更新结点x的高度
+	virtual int updateHeight(BinNodePosi(T) x); //更新结点x的高度
 	void updateHeightAbove(BinNodePosi(T) x); //更新x以及x的所有祖先元素的高度
     void updateDistanceToRoot(BinNodePosi(T) x);	//更新x结点及其孩子距离根节点的距离
     void calculatePosition();   //计算结点位置 结果存放在每个结点的horizontal_position和distance_to_root中
