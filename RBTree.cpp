@@ -18,5 +18,9 @@ int main()
 
 	rb.display();
 
+	rb.remove(4);
+	rb.display();
+	
+
 	return 0;
 }
