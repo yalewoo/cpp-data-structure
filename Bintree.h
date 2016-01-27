@@ -506,7 +506,7 @@ void BinTree<T>::calculatePosition()
     int count = 0;
     BinNodePosi(T) x = _root;
     //找到中序遍历的第一个结点
-    while (x->lchild != NULL)
+    while (x && x->lchild != NULL)
         x = x->lchild;
     //按照中序遍历的次序记录结点访问次序
     while (x != NULL)
@@ -587,8 +587,8 @@ void BinTree<T>::display()
 
 		}
 
-		if (x->lchild) q.enqueue(x->lchild);
-		if (x->rchild) q.enqueue(x->rchild);
+		if (x && x->lchild) q.enqueue(x->lchild);
+		if (x && x->rchild) q.enqueue(x->rchild);
 	}
 
 
