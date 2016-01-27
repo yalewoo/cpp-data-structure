@@ -26,6 +26,7 @@ protected:
 	using BST<T>::_hot;
 	using BST<T>::search;
 
+
 	using BST<T>::siblingOf;
 	using BST<T>::connect34;
 	using BST<T>::removeAt;
@@ -73,6 +74,7 @@ BinNodePosi(T) RBT<T>::insert(const T & e)
 	if (p == 0)
 	{
 		x->color = BLACK;
+		x->height = 1;
 		return x;
 	}
 
@@ -86,6 +88,8 @@ BinNodePosi(T) RBT<T>::insert(const T & e)
 
 	//若p是红色 出现双红缺陷
 	solveDoubleRed(x);
+
+	//++_size;
 	return x;
 
 
@@ -178,12 +182,19 @@ void RBT<T>::solveDoubleRed(BinNodePosi(T) x)
 		t2->color = BLACK;
 		t1->color = RED;
 		t3->color = RED;
+
+		t2->height++;
+		t3->height--;
+
 	}
 	else
 	{
 		p->color = BLACK;
 		u->color = BLACK;
 		g->color = RED;
+
+		p->height++;
+		g->height--;
 
 		if (g->parent == 0)
 			g->color = BLACK;
@@ -199,9 +210,19 @@ bool RBT<T>::remove(const T & e)
 	BinNodePosi(T) x = search(e);
 	if (!x) return false;
 
+	if (x->lchild && x->rchild)
+	{
+		BinNodePosi(T) p = x->succ();
+		T tmp = x->data;
+		x->data = p->data;
+		p->data = tmp;
+
+		x = p;
+	}
+
 	BinNodePosi(T) r = removeAt(x);
 
-	if ((--_size) == 0)
+	if ((_size) == 0)
 		return true;
 	if (_hot == 0)
 	{
@@ -212,7 +233,9 @@ bool RBT<T>::remove(const T & e)
 
 	if (IsRed(x) || IsRed(r))
 	{
-		r->color = BLACK;
+		if (IsRed(r))
+			r->color = BLACK;
+
 		return true;
 	}
 	else
@@ -220,7 +243,7 @@ bool RBT<T>::remove(const T & e)
 		solveDoubleBlack(r);
 	}
 
-	--_size;
+
 	delete x;
 
 	return true;
@@ -229,8 +252,9 @@ bool RBT<T>::remove(const T & e)
 template <typename T>
 void RBT<T>::solveDoubleBlack(BinNodePosi(T) r)
 {
-	BinNodePosi(T) p = r->parent;
-	BinNodePosi(T) s = siblingOf(r);
+	BinNodePosi(T) p = r ? r->parent : _hot;
+	if (p == 0) return;
+	BinNodePosi(T) s = ( r == p->lchild ? p->rchild : p->lchild );
 
 	if (IsBlack(s))
 	{
