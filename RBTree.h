@@ -5,12 +5,9 @@
 
 
 
-
-
-#define COLOR(x) (x==0 ? BLACK : x->color)
 #define IsBlack(x) ( (x) == 0 || (x)->color == BLACK )
 #define IsRed(x) ( !IsBlack(x) )
-#define BlackHeightUpdated(x) ( stature((x)->lchild) == stature((x)->rchild) ) && ((x)->height == ( IsRed(x) ? stature((x)->lchild) : stature((x)->lchild) + 1 )) )
+
 
 template <typename T>
 class RBT : public BST<T>{
@@ -40,6 +37,8 @@ protected:
 	virtual int updateHeight(BinNodePosi(T) x);
 };
 
+
+//更新某结点的黑高度
 template <typename T>
 int RBT<T>::updateHeight(BinNodePosi(T) x)
 {
@@ -103,7 +102,7 @@ void RBT<T>::solveDoubleRed(BinNodePosi(T) x)
 
 	BinNodePosi(T) u = siblingOf(p);
 	
-	if (COLOR(u) == BLACK)
+	if (IsBlack(u))	//情况2.1 p红u黑
 	{
 		BinNodePosi(T) par = g->parent;
 		enum {ROOT, LEFT, RIGHT} ptoc;
@@ -187,7 +186,7 @@ void RBT<T>::solveDoubleRed(BinNodePosi(T) x)
 		t3->height--;
 
 	}
-	else
+	else	//情况2.2 p红u红
 	{
 		p->color = BLACK;
 		u->color = BLACK;
@@ -198,7 +197,7 @@ void RBT<T>::solveDoubleRed(BinNodePosi(T) x)
 
 		if (g->parent == 0)
 			g->color = BLACK;
-		else if (COLOR(g->parent) == RED)
+		else if (IsRed(g->parent))
 			solveDoubleRed(g);
 	}
 
@@ -207,9 +206,11 @@ void RBT<T>::solveDoubleRed(BinNodePosi(T) x)
 template <typename T>
 bool RBT<T>::remove(const T & e)
 {
+	//如果已存在则返回false
 	BinNodePosi(T) x = search(e);
 	if (!x) return false;
 
+	//左右孩子都存在时，与中序后继交换元素 保证删除时有一个孩子为空
 	if (x->lchild && x->rchild)
 	{
 		BinNodePosi(T) p = x->succ();
@@ -222,8 +223,10 @@ bool RBT<T>::remove(const T & e)
 
 	BinNodePosi(T) r = removeAt(x);
 
+	//如果删除后变为空树 直接返回
 	if ((_size) == 0)
 		return true;
+	//如果删除的是根节点重新将根节点染黑 并更新高度
 	if (_hot == 0)
 	{
 		_root->color = BLACK;
@@ -231,6 +234,7 @@ bool RBT<T>::remove(const T & e)
 		return true;
 	}
 
+	//x和r有一个为红
 	if (IsRed(x) || IsRed(r))
 	{
 		if (IsRed(r))
@@ -258,8 +262,8 @@ void RBT<T>::solveDoubleBlack(BinNodePosi(T) r)
 
 	if (IsBlack(s))
 	{
-		if ( IsRed(s->lchild) || IsRed(s->rchild) )
-		{
+		if ( IsRed(s->lchild) || IsRed(s->rchild) )	//情况1 s为黑 t为红
+		{	
 			BinNodePosi(T) t;
 			if (IsRed(s->rchild)) t = s->rchild;
 			if (IsRed(s->lchild)) t = s->lchild;
@@ -345,23 +349,23 @@ void RBT<T>::solveDoubleBlack(BinNodePosi(T) r)
 			t3->color = BLACK;
 
 		}
-		else
+		else	//情况2 s为黑 s的两个孩子为黑
 		{
 			s->color = RED;
 			--s->height;
 
-			if (IsRed(p))
+			if (IsRed(p))	//情况2.1 s为黑 s的两个孩子均为黑 p为红
 			{
 				p->color = BLACK;
 			}
-			else
+			else	//s为黑 s的两个孩子均为黑 p为黑
 			{
 				p->height--;
 				solveDoubleBlack(p);
 			}
 		}
 	}
-	else	//s为红
+	else	//情况3 s为红
 	{
 		if (s == p->lchild)
 		{
