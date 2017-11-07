@@ -111,6 +111,7 @@ BinNodePosi(T) BST<T>::removeAt(BinNodePosi(T) x)
 		suc = x->rchild;
 		_hot = x->parent;
 		transplant(x, x->rchild);
+		delete x;
 	}
 	//has lchild
 	else if (!x->rchild)	//no rchild ,move lchild to x
@@ -118,6 +119,7 @@ BinNodePosi(T) BST<T>::removeAt(BinNodePosi(T) x)
 		suc = x->lchild;
 		_hot = x->parent;
 		transplant(x, x->lchild);
+		delete x;
 	}
 	else	//two children
 	{
@@ -135,6 +137,8 @@ BinNodePosi(T) BST<T>::removeAt(BinNodePosi(T) x)
 		p->data = tmp;
 
 		transplant(p, p->rchild);
+		if (p)
+			delete p;
 		
 	}
 	--_size;
@@ -148,7 +152,7 @@ bool BST<T>::remove(const T & e)
 	if (!x) return false;
 
 	removeAt(x);
-	delete x;
+	
 
 	return true;
 }

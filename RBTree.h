@@ -4,7 +4,6 @@
 #include "BST.h"
 
 
-
 #define IsBlack(x) ( (x) == 0 || (x)->color == BLACK )
 #define IsRed(x) ( !IsBlack(x) )
 
